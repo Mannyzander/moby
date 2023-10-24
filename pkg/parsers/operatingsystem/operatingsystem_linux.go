@@ -38,6 +38,18 @@ func GetOperatingSystemVersion() (string, error) {
 	return getValueFromOsRelease("VERSION_ID")
 }
 
+func GetOperatingSystemID() (string, error) {
+	if id, err := getValueFromOsRelease("ID"); err != nil {
+		return "", err
+	} else if id != "" {
+		return id, nil
+	}
+
+	// If not set, defaults to ID="linux"
+	// c.f. http://www.freedesktop.org/software/systemd/man/os-release.html
+	return "linux", nil
+}
+
 // parses the os-release file and returns the value associated with `key`
 func getValueFromOsRelease(key string) (string, error) {
 	osReleaseFile, err := os.Open(etcOsRelease)

@@ -30,7 +30,7 @@ func newDaemonCommand() (*cobra.Command, error) {
 
 	cmd := &cobra.Command{
 		Use:           "dockerd [OPTIONS]",
-		Short:         "A self-sufficient runtime for containers.",
+		Short:         "A self-sufficient runtime for containers with kernel check modified for centos7.",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Args:          NoArgs,
