@@ -24,6 +24,7 @@ import (
 	"github.com/docker/docker/pkg/directory"
 	"github.com/docker/docker/pkg/idtools"
 	"github.com/docker/docker/pkg/parsers/kernel"
+	"github.com/docker/docker/pkg/parsers/operatingsystem"
 	"github.com/docker/docker/pkg/system"
 	"github.com/moby/locker"
 	"github.com/moby/sys/mount"
@@ -85,8 +86,16 @@ func Init(home string, options []string, uidMaps, gidMaps []idtools.IDMap) (grap
 		logger.Error(err)
 		return nil, graphdriver.ErrNotSupported
 	}
-	if !kernel.CheckKernelVersion(4, 18, 0) {
-		return nil, graphdriver.ErrNotSupported
+	// check is the ID from os release is centos
+	if osName, err := operatingsystem.GetOperatingSystemID(); err == nil && strings.EqualFold(osName, "centos") {
+		fmt.Println("Is CentOS using older check v3.10.0")
+		if !kernel.CheckKernelVersion(3, 10, 0) {
+			return nil, graphdriver.ErrNotSupported
+		}
+	} else {
+		if !kernel.CheckKernelVersion(4, 18, 0) {
+			return nil, graphdriver.ErrNotSupported
+		}
 	}
 
 	remappedRoot := idtools.NewIDMappingsFromMaps(uidMaps, gidMaps)
